@@ -1,2 +1,2 @@
-from .FM_backbone import Backbone
-from .FM_train import FM
+from .AMF_backbone import AMF
+from .AMF_train import AMFTrain

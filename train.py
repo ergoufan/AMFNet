@@ -14,7 +14,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
 
 from dataset import CloudRemovalDataset
-from model import FM
+from model import AMFTrain
 from ssim_prsn import ssim, psnr
 from loss import ContrastLoss
 
@@ -598,7 +598,7 @@ def main(args):
         print(f'   GPU Memory: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.1f} GB')
     
     print(" Initializing model...")
-    model = nn.DataParallel(FM()).to(device)
+    model = nn.DataParallel(AMFTrain()).to(device)
     
     criterion = nn.L1Loss().to(device)
     
@@ -626,9 +626,9 @@ if __name__ == '__main__':
     
     parser.add_argument('--data_dir', type=str, default=r'../data/OTS/train',
                         help='Path to dataset directory')
-    parser.add_argument('--curve_dir', type=str, default=r'../curves/ours_fft_outdoor_train1',
+    parser.add_argument('--curve_dir', type=str, default=r'../curves/AMF',
                         help='Path to save training curves')
-    parser.add_argument('--save_dir', type=str, default=r'../checkpoints/train_ours_fft_outdoor_train1',
+    parser.add_argument('--save_dir', type=str, default=r'../checkpoints/train_AMF',
                         help='Path to save checkpoints')
     parser.add_argument('--save_cycle', type=float, default=0.001,
                         help='Cycle of saving checkpoint (fraction of total steps)')

@@ -3,15 +3,15 @@ import torch.nn.functional as F
 import torch
 
 
-from .modules import FMMtrain, MSFFMtrain, MAFusion
+from .modules import AFRMtrain, GMPFMtrain, MAFusion
 
 
 def default_conv(in_channels, out_channels, kernel_size, bias=True):
     return nn.Conv2d(in_channels, out_channels, kernel_size, padding=(kernel_size // 2), bias=bias)
 
-class FM(nn.Module):
+class AMFTrain(nn.Module):
     def __init__(self, base_dim=32):
-        super(FM, self).__init__()
+        super(AMFTrain, self).__init__()
         # down-sample
         self.down1 = nn.Sequential(nn.Conv2d(3, base_dim, kernel_size=3, stride = 1, padding=1))
         self.down2 = nn.Sequential(nn.Conv2d(base_dim, base_dim*2, kernel_size=3, stride=2, padding=1),
@@ -19,32 +19,32 @@ class FM(nn.Module):
         self.down3 = nn.Sequential(nn.Conv2d(base_dim*2, base_dim*4, kernel_size=3, stride=2, padding=1),
                                    nn.ReLU(True))
 
-        self.down_level1_block1 = FMMtrain(default_conv, base_dim, 3)
-        self.down_level1_block2 = FMMtrain(default_conv, base_dim, 3)
-        self.down_level1_block3 = FMMtrain(default_conv, base_dim, 3)
-        self.down_level1_block4 = FMMtrain(default_conv, base_dim, 3)
-        self.up_level1_block1 = MSFFMtrain(default_conv, base_dim, 3)
-        self.up_level1_block2 = MSFFMtrain(default_conv, base_dim, 3)
-        self.up_level1_block3 = MSFFMtrain(default_conv, base_dim, 3)
-        self.up_level1_block4 = MSFFMtrain(default_conv, base_dim, 3)
+        self.down_level1_block1 = AFRMtrain(default_conv, base_dim, 3)
+        self.down_level1_block2 = AFRMtrain(default_conv, base_dim, 3)
+        self.down_level1_block3 = AFRMtrain(default_conv, base_dim, 3)
+        self.down_level1_block4 = AFRMtrain(default_conv, base_dim, 3)
+        self.up_level1_block1 = GMPFMtrain(default_conv, base_dim, 3)
+        self.up_level1_block2 = GMPFMtrain(default_conv, base_dim, 3)
+        self.up_level1_block3 = GMPFMtrain(default_conv, base_dim, 3)
+        self.up_level1_block4 = GMPFMtrain(default_conv, base_dim, 3)
 
-        self.down_level2_block1 = FMMtrain(default_conv, base_dim * 2, 3)
-        self.down_level2_block2 = FMMtrain(default_conv, base_dim * 2, 3)
-        self.down_level2_block3 = FMMtrain(default_conv, base_dim * 2, 3)
-        self.down_level2_block4 = FMMtrain(default_conv, base_dim * 2, 3)
-        self.up_level2_block1 = MSFFMtrain(default_conv, base_dim * 2, 3)
-        self.up_level2_block2 = MSFFMtrain(default_conv, base_dim * 2, 3)
-        self.up_level2_block3 = MSFFMtrain(default_conv, base_dim * 2, 3)
-        self.up_level2_block4 = MSFFMtrain(default_conv, base_dim * 2, 3)
+        self.down_level2_block1 = AFRMtrain(default_conv, base_dim * 2, 3)
+        self.down_level2_block2 = AFRMtrain(default_conv, base_dim * 2, 3)
+        self.down_level2_block3 = AFRMtrain(default_conv, base_dim * 2, 3)
+        self.down_level2_block4 = AFRMtrain(default_conv, base_dim * 2, 3)
+        self.up_level2_block1 = GMPFMtrain(default_conv, base_dim * 2, 3)
+        self.up_level2_block2 = GMPFMtrain(default_conv, base_dim * 2, 3)
+        self.up_level2_block3 = GMPFMtrain(default_conv, base_dim * 2, 3)
+        self.up_level2_block4 = GMPFMtrain(default_conv, base_dim * 2, 3)
 
-        self.level3_block1 = MSFFMtrain(default_conv, base_dim * 4, 3)
-        self.level3_block2 = MSFFMtrain(default_conv, base_dim * 4, 3)
-        self.level3_block3 = MSFFMtrain(default_conv, base_dim * 4, 3)
-        self.level3_block4 = MSFFMtrain(default_conv, base_dim * 4, 3)
-        self.level3_block5 = MSFFMtrain(default_conv, base_dim * 4, 3)
-        self.level3_block6 = MSFFMtrain(default_conv, base_dim * 4, 3)
-        self.level3_block7 = MSFFMtrain(default_conv, base_dim * 4, 3)
-        self.level3_block8 = MSFFMtrain(default_conv, base_dim * 4, 3)
+        self.level3_block1 = GMPFMtrain(default_conv, base_dim * 4, 3)
+        self.level3_block2 = GMPFMtrain(default_conv, base_dim * 4, 3)
+        self.level3_block3 = GMPFMtrain(default_conv, base_dim * 4, 3)
+        self.level3_block4 = GMPFMtrain(default_conv, base_dim * 4, 3)
+        self.level3_block5 = GMPFMtrain(default_conv, base_dim * 4, 3)
+        self.level3_block6 = GMPFMtrain(default_conv, base_dim * 4, 3)
+        self.level3_block7 = GMPFMtrain(default_conv, base_dim * 4, 3)
+        self.level3_block8 = GMPFMtrain(default_conv, base_dim * 4, 3)
         # up-sample
         self.up1 = nn.Sequential(nn.ConvTranspose2d(base_dim*4, base_dim*2, kernel_size=3, stride=2, padding=1, output_padding=1),
                                  nn.ReLU(True))
@@ -101,7 +101,7 @@ class FM(nn.Module):
 
 
 if __name__ == "__main__":
-    model = FM()
+    model = AMFTrain()
     input_tensor = torch.randn(1, 3, 256, 256)
     output = model(input_tensor)
     print(output.shape)

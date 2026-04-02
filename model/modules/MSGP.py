@@ -3,20 +3,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class MSGC(nn.Module):
+class MSGP(nn.Module):
     def __init__(self, dim, n_levels=4):
         super().__init__()
         self.n_levels = n_levels
         chunk_dim = dim // n_levels
-
         self.mfr = nn.ModuleList([nn.Conv2d(chunk_dim*2, chunk_dim, 3, 1, 1, groups=chunk_dim) for i in range(self.n_levels - 1)])
         self.mfr0 = nn.Conv2d(chunk_dim, chunk_dim, 3, 1, 1, groups=chunk_dim)
-        
-
-        # # Feature Aggregation
         self.aggr = nn.Conv2d(dim, dim, 1, 1, 0)
-        
-        # Activation
         self.act = nn.GELU() 
 
     def forward(self, x):

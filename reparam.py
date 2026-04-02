@@ -44,7 +44,7 @@ def convert_adc(w, device='cpu'):
 
 
 if __name__ == '__main__':
-    saved_model_path = '../checkpoints/train_ours_fft_outdoor_train1/best.pth'
+    saved_model_path = '../checkpoints/AMF/best.pth'
     
     print(f"LOADING: {saved_model_path}")
     

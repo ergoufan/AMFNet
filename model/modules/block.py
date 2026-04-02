@@ -1,7 +1,7 @@
 from torch import nn
 import torch
 import torch.functional as F
-from .MSGC import MSGC
+from .MSGP import MSGP
 from .fft import AM
 
 
@@ -29,9 +29,9 @@ class LayerNorm(nn.Module):
 
 
 
-class FMM(nn.Module):
+class AFRM(nn.Module):
     def __init__(self, conv, dim, kernel_size):
-        super(FMM, self).__init__()
+        super(AFRM, self).__init__()
         self.norm1 = LayerNorm(dim)
         self.norm2 = LayerNorm(dim)
         self.fre = AM(dim, expand = 2)
@@ -52,12 +52,12 @@ class FMM(nn.Module):
         return res
 
 
-class MSFFM(nn.Module):  
+class GMPFM(nn.Module):  
     def __init__(self, conv, dim, kernel_size):
-        super(MSFFM, self).__init__()
+        super(GMPFM, self).__init__()
         self.norm1 = LayerNorm(dim)
         self.norm2 = LayerNorm(dim)
-        self.msgc = MSGC(dim, n_levels=4)
+        self.msgc = MSGP(dim, n_levels=4)
         self.conv1 = conv(dim, dim, kernel_size,  bias=True)
         self.act1 = nn.GELU()
         self.conv2 = conv(dim, dim, kernel_size,  bias=True)

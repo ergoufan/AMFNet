@@ -19,7 +19,6 @@ class AM(nn.Module):
         mag = torch.abs(x_freq)     
         pha = torch.angle(x_freq)   
         mag = self.process1(mag)
-        # pha = self.process1(pha)
         real = mag * torch.cos(pha)
         imag = mag * torch.sin(pha)
         x_out = torch.complex(real, imag)

@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from utils import AverageMeter, pad_img, val_psnr, val_ssim
 from data import ValDataset
-from model import Backbone
+from model import AMF
 
 
 def eval(val_loader, network, save_dir=None):
@@ -54,7 +54,7 @@ if __name__ == '__main__':
                        help='path to hazy images')
     parser.add_argument('--clear_dir', type=str, default='../data/Haze4K/test/clear',
                        help='path to clear images')
-    parser.add_argument('--save_dir', type=str, default='../FM_RESULT/test_haze4k',
+    parser.add_argument('--save_dir', type=str, default='../results/test_haze4k',
                        help='directory to save inference results')
     parser.add_argument('--batch_size', type=int, default=1,
                        help='batch size for evaluation')
@@ -64,7 +64,7 @@ if __name__ == '__main__':
                        help='whether to save inference results')
     args = parser.parse_args()
 
-    network = DataParallel(Backbone()).cuda()
+    network = DataParallel(AMF()).cuda()
 
     print(f"hazy_dir: {args.hazy_dir}")
     print(f"clear_dir: {args.clear_dir}")

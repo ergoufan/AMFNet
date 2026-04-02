@@ -1,3 +1,3 @@
-from .MSFFMblock import FMM, MSFFM
-from .MSFFMtrainblock import FMMtrain, MSFFMtrain
+from .block import AFRM, GMPFM
+from .trainblock import AFRMtrain, GMPFMtrain
 from .MAFusion import MAFusion

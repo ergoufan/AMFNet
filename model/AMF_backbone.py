@@ -3,15 +3,15 @@ import torch.nn.functional as F
 import torch
 
 
-from .modules import FMM, MSFFM, MAFusion
+from .modules import AFRM, GMPFM, MAFusion
 
 
 def default_conv(in_channels, out_channels, kernel_size, bias=True):
     return nn.Conv2d(in_channels, out_channels, kernel_size, padding=(kernel_size // 2), bias=bias)
 
-class Backbone(nn.Module):
+class AMF(nn.Module):
     def __init__(self, base_dim=32):
-        super(Backbone, self).__init__()
+        super(AMF, self).__init__()
         # down-sample
         self.down1 = nn.Sequential(nn.Conv2d(3, base_dim, kernel_size=3, stride = 1, padding=1))
         self.down2 = nn.Sequential(nn.Conv2d(base_dim, base_dim*2, kernel_size=3, stride=2, padding=1),
@@ -19,32 +19,32 @@ class Backbone(nn.Module):
         self.down3 = nn.Sequential(nn.Conv2d(base_dim*2, base_dim*4, kernel_size=3, stride=2, padding=1),
                                    nn.ReLU(True))
 
-        self.down_level1_block1 = FMM(default_conv, base_dim, 3)
-        self.down_level1_block2 = FMM(default_conv, base_dim, 3)
-        self.down_level1_block3 = FMM(default_conv, base_dim, 3)
-        self.down_level1_block4 = FMM(default_conv, base_dim, 3)
-        self.up_level1_block1 = MSFFM(default_conv, base_dim, 3)
-        self.up_level1_block2 = MSFFM(default_conv, base_dim, 3)
-        self.up_level1_block3 = MSFFM(default_conv, base_dim, 3)
-        self.up_level1_block4 = MSFFM(default_conv, base_dim, 3)
+        self.down_level1_block1 = AFRM(default_conv, base_dim, 3)
+        self.down_level1_block2 = AFRM(default_conv, base_dim, 3)
+        self.down_level1_block3 = AFRM(default_conv, base_dim, 3)
+        self.down_level1_block4 = AFRM(default_conv, base_dim, 3)
+        self.up_level1_block1 = GMPFM(default_conv, base_dim, 3)
+        self.up_level1_block2 = GMPFM(default_conv, base_dim, 3)
+        self.up_level1_block3 = GMPFM(default_conv, base_dim, 3)
+        self.up_level1_block4 = GMPFM(default_conv, base_dim, 3)
 
-        self.down_level2_block1 = FMM(default_conv, base_dim * 2, 3)
-        self.down_level2_block2 = FMM(default_conv, base_dim * 2, 3)
-        self.down_level2_block3 = FMM(default_conv, base_dim * 2, 3)
-        self.down_level2_block4 = FMM(default_conv, base_dim * 2, 3)
-        self.up_level2_block1 = MSFFM(default_conv, base_dim * 2, 3)
-        self.up_level2_block2 = MSFFM(default_conv, base_dim * 2, 3)
-        self.up_level2_block3 = MSFFM(default_conv, base_dim * 2, 3)
-        self.up_level2_block4 = MSFFM(default_conv, base_dim * 2, 3)
+        self.down_level2_block1 = AFRM(default_conv, base_dim * 2, 3)
+        self.down_level2_block2 = AFRM(default_conv, base_dim * 2, 3)
+        self.down_level2_block3 = AFRM(default_conv, base_dim * 2, 3)
+        self.down_level2_block4 = AFRM(default_conv, base_dim * 2, 3)
+        self.up_level2_block1 = GMPFM(default_conv, base_dim * 2, 3)
+        self.up_level2_block2 = GMPFM(default_conv, base_dim * 2, 3)
+        self.up_level2_block3 = GMPFM(default_conv, base_dim * 2, 3)
+        self.up_level2_block4 = GMPFM(default_conv, base_dim * 2, 3)
 
-        self.level3_block1 = MSFFM(default_conv, base_dim * 4, 3)
-        self.level3_block2 = MSFFM(default_conv, base_dim * 4, 3)
-        self.level3_block3 = MSFFM(default_conv, base_dim * 4, 3)
-        self.level3_block4 = MSFFM(default_conv, base_dim * 4, 3)
-        self.level3_block5 = MSFFM(default_conv, base_dim * 4, 3)
-        self.level3_block6 = MSFFM(default_conv, base_dim * 4, 3)
-        self.level3_block7 = MSFFM(default_conv, base_dim * 4, 3)
-        self.level3_block8 = MSFFM(default_conv, base_dim * 4, 3)
+        self.level3_block1 = GMPFM(default_conv, base_dim * 4, 3)
+        self.level3_block2 = GMPFM(default_conv, base_dim * 4, 3)
+        self.level3_block3 = GMPFM(default_conv, base_dim * 4, 3)
+        self.level3_block4 = GMPFM(default_conv, base_dim * 4, 3)
+        self.level3_block5 = GMPFM(default_conv, base_dim * 4, 3)
+        self.level3_block6 = GMPFM(default_conv, base_dim * 4, 3)
+        self.level3_block7 = GMPFM(default_conv, base_dim * 4, 3)
+        self.level3_block8 = GMPFM(default_conv, base_dim * 4, 3)
         # up-sample
         self.up1 = nn.Sequential(nn.ConvTranspose2d(base_dim*4, base_dim*2, kernel_size=3, stride=2, padding=1, output_padding=1),
                                  nn.ReLU(True))
@@ -101,7 +101,7 @@ class Backbone(nn.Module):
 
 
 if __name__ == "__main__":
-    model = Backbone()
+    model = AMF()
     input_tensor = torch.randn(1, 3, 256, 256)
     output = model(input_tensor)
     print(output.shape)
